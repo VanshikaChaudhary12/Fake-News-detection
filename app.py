@@ -224,15 +224,13 @@ def internal_error(error):
 if __name__ == '__main__':
     """
     Run the Flask application
-    
-    Development server settings:
-    - Debug mode: enabled for development
-    - Host: localhost (127.0.0.1)
-    - Port: 5000
     """
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    
     print("Starting AI-Based Fake News Detection Web Application")
     print("=" * 55)
-    print("Open your browser and go to: http://localhost:5000")
+    print(f"Server running on port: {port}")
     print("Press Ctrl+C to stop the server")
     print()
     
@@ -245,4 +243,4 @@ if __name__ == '__main__':
     print("=" * 55)
     
     # Run the Flask app
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=False, host='0.0.0.0', port=port)
