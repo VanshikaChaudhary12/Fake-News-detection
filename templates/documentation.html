@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - AI Fake News Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-shield-halved"></i>
+                <span>FakeNews AI</span>
+            </a>
+            <div class="nav-menu">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/how-it-works" class="nav-link">How It Works</a>
+                <a href="/contact" class="nav-link">Contact</a>
+                <a href="/documentation" class="nav-link active">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-code"></i> API Documentation</h1>
+            <p>Integrate fake news detection into your applications</p>
+        </div>
+
+        <div class="api-section glass-card">
+            <h2>Prediction Endpoint</h2>
+            <div class="endpoint-box">
+                <span class="method post">POST</span>
+                <code>/predict</code>
+            </div>
+            <p>Analyze news content and get authenticity prediction.</p>
+
+            <h3>Request</h3>
+            <div class="code-block">
+                <pre><code>POST /predict
+Content-Type: application/x-www-form-urlencoded
+
+news_text=Your news article content here...</code></pre>
+            </div>
+
+            <h3>Response</h3>
+            <div class="code-block">
+                <pre><code>{
+  "error": false,
+  "prediction": 0,
+  "label": "Fake News",
+  "confidence": 0.8512,
+  "confidence_percentage": 85.12,
+  "message": "Analysis complete! This appears to be fake news."
+}</code></pre>
+            </div>
+
+            <h3>Response Fields</h3>
+            <table class="api-table">
+                <tr>
+                    <th>Field</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>error</code></td>
+                    <td>boolean</td>
+                    <td>Whether an error occurred</td>
+                </tr>
+                <tr>
+                    <td><code>prediction</code></td>
+                    <td>integer</td>
+                    <td>0 = Fake, 1 = Real</td>
+                </tr>
+                <tr>
+                    <td><code>label</code></td>
+                    <td>string</td>
+                    <td>"Fake News" or "Real News"</td>
+                </tr>
+                <tr>
+                    <td><code>confidence</code></td>
+                    <td>float</td>
+                    <td>Confidence score (0-1)</td>
+                </tr>
+                <tr>
+                    <td><code>confidence_percentage</code></td>
+                    <td>float</td>
+                    <td>Confidence as percentage</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="api-section glass-card">
+            <h2>Python Example</h2>
+            <div class="code-block">
+                <pre><code>import requests
+
+url = "http://localhost:5000/predict"
+data = {
+    "news_text": "Your news article content here..."
+}
+
+response = requests.post(url, data=data)
+result = response.json()
+
+print(f"Prediction: {result['label']}")
+print(f"Confidence: {result['confidence_percentage']}%")</code></pre>
+            </div>
+        </div>
+
+        <div class="api-section glass-card">
+            <h2>JavaScript Example</h2>
+            <div class="code-block">
+                <pre><code>const analyzeNews = async (text) => {
+  const response = await fetch('/predict', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `news_text=${encodeURIComponent(text)}`
+  });
+  
+  const data = await response.json();
+  console.log(`Prediction: ${data.label}`);
+  console.log(`Confidence: ${data.confidence_percentage}%`);
+};
+
+analyzeNews("Your news article content here...");</code></pre>
+            </div>
+        </div>
+
+        <div class="api-section glass-card">
+            <h2>Rate Limits</h2>
+            <p>Currently, there are no rate limits. For production use, consider implementing rate limiting.</p>
+        </div>
+
+        <footer class="footer">
+            <p>© 2024 AI Fake News Detection System | B.Tech CSE Final Year Project</p>
+        </footer>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.innerHTML = savedTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.innerHTML = newTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        });
+    </script>
+</body>
+</html>
