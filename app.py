@@ -27,6 +27,7 @@ class NewsPredictor:
         """
         self.model = None
         self.vectorizer = None
+        nltk.download('stopwords', quiet=True)
         self.stop_words = set(stopwords.words('english'))
         self.load_model()
     
