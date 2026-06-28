@@ -150,6 +150,14 @@ def predict():
     Accepts POST requests with news text and returns prediction
     """
     try:
+        # Check if model is loaded first
+        if not predictor.model or not predictor.vectorizer:
+            print("ERROR: Model not loaded!")
+            return jsonify({
+                'error': True,
+                'message': 'Model is not loaded. Please contact the administrator.'
+            })
+        
         # Get the news text from the form
         news_text = request.form.get('news_text', '').strip()
         
@@ -170,9 +178,10 @@ def predict():
         prediction, confidence, label = predictor.predict(news_text)
         
         if prediction is None:
+            print(f"ERROR: Prediction failed - {label}")
             return jsonify({
                 'error': True,
-                'message': 'Unable to analyze the text. Please try again.'
+                'message': f'Unable to analyze the text: {label}'
             })
         
         # Prepare response
@@ -188,7 +197,9 @@ def predict():
         return jsonify(response)
         
     except Exception as e:
-        print(f"Error in prediction: {str(e)}")
+        print(f"ERROR in prediction: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': True,
             'message': 'An error occurred during analysis. Please try again.'
