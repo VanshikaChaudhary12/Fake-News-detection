@@ -24,8 +24,18 @@ const detailModal = document.getElementById('detailModal');
 const modalBody = document.getElementById('modalBody');
 
 let currentResult = null;
-let analysisHistory = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
-let totalCount = parseInt(localStorage.getItem('totalAnalyzed') || '0');
+let analysisHistory = [];
+let totalCount = 0;
+
+// Safe localStorage access with fallback
+try {
+    analysisHistory = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
+    totalCount = parseInt(localStorage.getItem('totalAnalyzed') || '0');
+} catch (error) {
+    console.warn('localStorage not available, using session data only');
+    analysisHistory = [];
+    totalCount = 0;
+}
 
 const sampleArticles = [
     {
@@ -66,7 +76,11 @@ themeToggle.addEventListener('click', () => {
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     
     document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    try {
+        localStorage.setItem('theme', newTheme);
+    } catch (error) {
+        console.warn('Could not save theme preference');
+    }
     
     themeToggle.innerHTML = newTheme === 'light' 
         ? '<i class="fas fa-moon"></i>' 
@@ -74,7 +88,12 @@ themeToggle.addEventListener('click', () => {
 });
 
 function initializeTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    let savedTheme = 'dark';
+    try {
+        savedTheme = localStorage.getItem('theme') || 'dark';
+    } catch (error) {
+        console.warn('localStorage not available for theme');
+    }
     document.documentElement.setAttribute('data-theme', savedTheme);
     themeToggle.innerHTML = savedTheme === 'light' 
         ? '<i class="fas fa-moon"></i>' 
@@ -205,10 +224,18 @@ function saveToHistory(text, data) {
     analysisHistory.unshift(historyItem);
     if (analysisHistory.length > 10) analysisHistory.pop();
     
-    localStorage.setItem('analysisHistory', JSON.stringify(analysisHistory));
+    try {
+        localStorage.setItem('analysisHistory', JSON.stringify(analysisHistory));
+    } catch (error) {
+        console.warn('Could not save to localStorage');
+    }
     
     totalCount++;
-    localStorage.setItem('totalAnalyzed', totalCount.toString());
+    try {
+        localStorage.setItem('totalAnalyzed', totalCount.toString());
+    } catch (error) {
+        console.warn('Could not save count to localStorage');
+    }
     
     loadHistory();
 }
@@ -244,7 +271,11 @@ function loadHistory() {
 function clearHistory() {
     if (confirm('Clear all analysis history?')) {
         analysisHistory = [];
-        localStorage.removeItem('analysisHistory');
+        try {
+            localStorage.removeItem('analysisHistory');
+        } catch (error) {
+            console.warn('Could not clear localStorage');
+        }
         loadHistory();
     }
 }
